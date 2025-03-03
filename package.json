@@ -1,0 +1,38 @@
+{
+  "name": "next-portfolio",
+  "private": false,
+  "version": "0.0.0",
+  "type": "module",
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "main": "./dist/next-portfolio.umd.js",
+  "module": "./dist/next-portfolio.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/next-portfolio.es.js",
+      "require": "./dist/next-portfolio.umd.js",
+      "types": "./dist/lib/index.d.ts"
+    }
+  },
+  "types": "./dist/lib/index.d.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "build:lib": "vue-tsc -b && vite build --mode lib",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vue/runtime-core": "^3.5.13",
+    "gsap": "^3.12.7",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0",
+    "vue-tsc": "^2.2.4"
+  }
+}
