@@ -12,6 +12,9 @@ export * from './directives'
 // 导出所有组合式函数
 export * from './composables'
 
+// 导出所有辅助函数
+export * from './helper'
+
 // 导出版本信息
 export const version = '0.0.0'
 

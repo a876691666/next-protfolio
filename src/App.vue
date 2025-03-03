@@ -1,12 +1,46 @@
 <template>
   <ScrollBase>
     <!-- PageBase 组件 -->
-    <PageBase>
-      <div class="section" v-gsap="[]">第一屏</div>
+    <PageBase
+      v-gsap="[
+        rangeGsap(
+          pointGsap('center 100%', { opacity: 0 }),
+          pointGsap('center 0%', { opacity: 1 })
+        ),
+      ]"
+    >
+      <div class="section">
+        <span
+          v-gsap="[
+            rangeGsap(
+              pointGsap('center 100%', { opacity: 0 }),
+              pointGsap('center 50%', { opacity: 1 })
+            ),
+            rangeGsap(
+              pointGsap('center 50%', { opacity: 1 }),
+              pointGsap('center 0%', { opacity: 0 })
+            ),
+          ]"
+        >
+          第一屏
+        </span>
+      </div>
     </PageBase>
 
     <PageBase>
-      <div class="section">第二屏</div>
+      <div class="section">
+        <span
+          v-gsap="[
+            freamGsap([
+              pointGsap('center 100%', { fontSize: 12, opacity: 0 }),
+              pointGsap('center 50%', { fontSize: 50, opacity: 1 }),
+              pointGsap('center 0%', { fontSize: 12, opacity: 0 }),
+            ]),
+          ]"
+        >
+          第2屏
+        </span>
+      </div>
     </PageBase>
 
     <!-- 其他内容 -->
@@ -14,7 +48,7 @@
 </template>
 
 <script setup lang="ts">
-import { ScrollBase, PageBase } from "next-portfolio";
+import { ScrollBase, PageBase, rangeGsap, pointGsap, freamGsap } from "next-portfolio";
 </script>
 
 <style scoped>
