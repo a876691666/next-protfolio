@@ -4,8 +4,8 @@
     <PageBase
       v-gsap="[
         rangeGsap(
-          pointGsap('center 100%', { opacity: 0 }),
-          pointGsap('center 0%', { opacity: 1 })
+          pointGsap('top top', { props: { scale: 1 } }),
+          pointGsap('bottom top', { props: { scale: 0 } })
         ),
       ]"
     >
@@ -13,12 +13,12 @@
         <span
           v-gsap="[
             rangeGsap(
-              pointGsap('center 100%', { opacity: 0 }),
-              pointGsap('center 50%', { opacity: 1 })
+              pointGsap('center 100%', { style: { opacity: 0 } }),
+              pointGsap('center 50%', { style: { opacity: 1 } })
             ),
             rangeGsap(
-              pointGsap('center 50%', { opacity: 1 }),
-              pointGsap('center 0%', { opacity: 0 })
+              pointGsap('center 50%', { style: { opacity: 1 } }),
+              pointGsap('center 0%', { style: { opacity: 0 } })
             ),
           ]"
         >
@@ -32,9 +32,9 @@
         <span
           v-gsap="[
             freamGsap([
-              pointGsap('center 100%', { fontSize: 12, opacity: 0 }),
-              pointGsap('center 50%', { fontSize: 50, opacity: 1 }),
-              pointGsap('center 0%', { fontSize: 12, opacity: 0 }),
+              pointGsap('center 100%', { style: { fontSize: 12, opacity: 0 } }),
+              pointGsap('center 50%', { style: { fontSize: 50, opacity: 1 } }),
+              pointGsap('center 0%', { style: { fontSize: 12, opacity: 0 } }),
             ]),
           ]"
         >

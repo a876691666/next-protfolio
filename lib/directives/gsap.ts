@@ -31,16 +31,16 @@ export const vGsap: Directive = {
 
     // Store all timelines for cleanup
     (el as any)._gsapTimelines = [];
-    
+
     // Create timelines for each keyframe
     keyframes.forEach((keyframe) => {
       const timelines = createGsapTimeline(keyframe, {
         el,
         scrollerEl,
         isComponent,
-        updateCallback: isComponent 
+        updateCallback: isComponent
           ? (progress, state) => vnode.ctx.exposed?.gsapUpdate(progress, state)
-          : undefined
+          : undefined,
       });
       (el as any)._gsapTimelines.push(...timelines);
     });
