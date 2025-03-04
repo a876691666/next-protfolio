@@ -5,11 +5,8 @@
 </template>
 
 <script lang="ts" setup>
-import { provide, ref, onMounted, onUnmounted, reactive, watch, type Reactive } from "vue";
+import { provide, ref, onUnmounted, watch } from "vue";
 import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export interface ScrollProgressContext {
   progress: number;
@@ -17,8 +14,6 @@ export interface ScrollProgressContext {
 }
 
 const pageEl = ref<HTMLElement | null>(null);
-const progress = ref(0);
-let trigger: ScrollTrigger | null = null;
 
 const props = withDefaults(
   defineProps<{
@@ -28,27 +23,6 @@ const props = withDefaults(
     scale: 1,
   }
 );
-
-onMounted(() => {
-  if (!pageEl.value) return;
-
-  trigger = ScrollTrigger.create({
-    trigger: pageEl.value,
-    start: "top top",
-    end: "bottom bottom",
-    scrub: true,
-    onUpdate: (self) => {
-      progress.value = self.progress * 100;
-    },
-  });
-});
-
-onUnmounted(() => {
-  if (trigger) {
-    trigger.kill();
-    trigger = null;
-  }
-});
 
 // 提供注入键值
 provide("page-trigger-el", pageEl);
@@ -78,14 +52,6 @@ const createPropsState = <T extends Record<string, any>>(props: T): T => {
 
 // 创建并暴露状态管理对象
 const propsState: any = createPropsState(props);
-
-// 清理函数
-onUnmounted(() => {
-  if (trigger) {
-    trigger.kill();
-    trigger = null;
-  }
-});
 
 defineExpose({
   gsapUpdate: (progress: number, state: Record<string, any>) => {

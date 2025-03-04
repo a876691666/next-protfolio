@@ -1,69 +1,81 @@
 <template>
-  <div class="scroll-base" ref="scrollerRef">
-    <div class="scroll-content">
-      <slot></slot>
-    </div>
-  </div>
+  <main ref="scrollBaseRef" class="scroll-base">
+    <slot></slot>
+  </main>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, provide } from "vue";
-import gsap from "gsap";
+import { onMounted, onUnmounted, shallowRef } from "vue";
+import LocomotiveScroll from "locomotive-scroll";
 import ScrollTrigger from "gsap/ScrollTrigger";
-import { useScrollBase } from "../composables/useScrollBase";
+import "locomotive-scroll/dist/locomotive-scroll.css";
+import { init } from "../store/global";
 
-gsap.registerPlugin(ScrollTrigger);
+const scrollBaseRef = shallowRef<HTMLElement>();
+const locomotiveScroll = shallowRef<LocomotiveScroll | null>(null);
 
-const { scrollerRef } = useScrollBase();
+function initScrollTrigger() {
+  if (locomotiveScroll.value) {
+    const locoScroll = locomotiveScroll.value;
 
-// 提供滚动容器元素给子组件
-provide("scroll-base-el", scrollerRef);
+    locoScroll.on("scroll", () => {
+      ScrollTrigger.update();
+    });
+
+    ScrollTrigger.scrollerProxy(scrollBaseRef.value!, {
+      scrollTop(value) {
+        return arguments.length
+          ? locoScroll.scrollTo(value!, { duration: 0, disableLerp: true })
+          : // @ts-ignore
+            locoScroll.scroll.instance.scroll.y;
+      },
+      getBoundingClientRect() {
+        return {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+      },
+      pinType: scrollBaseRef.value?.style.transform ? "transform" : "fixed",
+    });
+
+    ScrollTrigger.addEventListener("refresh", () => {
+      locoScroll.update();
+    });
+    ScrollTrigger.defaults({ scroller: scrollBaseRef.value });
+
+    ScrollTrigger.refresh();
+  }
+}
+
+function destroyLocomotiveScroll() {
+  if (locomotiveScroll.value) {
+    locomotiveScroll.value.destroy();
+    locomotiveScroll.value = null;
+  }
+}
 
 onMounted(() => {
-  if (!scrollerRef.value) return;
-
-  // 设置 ScrollTrigger 默认滚动容器
-  ScrollTrigger.defaults({
-    scroller: scrollerRef.value,
+  locomotiveScroll.value = new LocomotiveScroll({
+    el: scrollBaseRef.value,
+    smooth: true,
   });
 
-  // 刷新 ScrollTrigger
-  ScrollTrigger.refresh();
+  initScrollTrigger();
 
-  // 设置滚动容器
+  init.value = true;
+});
+
+onUnmounted(() => {
+  destroyLocomotiveScroll();
 });
 </script>
 
 <style scoped>
 .scroll-base {
-  position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  /* 启用平滑滚动 */
-  scroll-behavior: smooth;
-  /* 优化移动端滚动体验 */
-  -webkit-overflow-scrolling: touch;
-  /* 隐藏滚动条但保持功能 */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-}
-
-/* 隐藏 Webkit 滚动条 */
-.scroll-base::-webkit-scrollbar {
-  display: none;
-}
-
-.scroll-content {
-  /* 确保内容可以撑开容器 */
-  min-height: 100%;
-  /* 保持内容不被固定定位影响 */
-  position: relative;
-  /* 启用 3D 加速 */
-  transform: translateZ(0);
-  will-change: transform;
+  width: 100vw;
 }
 </style>

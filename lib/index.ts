@@ -9,9 +9,6 @@ export * from './utils'
 // 导出所有指令
 export * from './directives'
 
-// 导出所有组合式函数
-export * from './composables'
-
 // 导出所有辅助函数
 export * from './helper'
 

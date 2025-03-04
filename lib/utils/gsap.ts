@@ -1,94 +1,108 @@
-import gsap from 'gsap'
+import gsap from "gsap";
+import type { GsapType, GsapState } from "../helper";
 
-interface AnimationConfig {
-  duration?: number
-  ease?: string
-  delay?: number
+interface CreateTimelineOptions {
+  el: HTMLElement;
+  isComponent: boolean;
+  updateCallback?: (progress: number, state: Record<string, any>) => void;
 }
 
-export class GsapAnimation {
-  /**
-   * 淡入动画
-   * @param element DOM元素或选择器
-   * @param config 动画配置
-   */
-  static fadeIn(element: Element | string, config: AnimationConfig = {}) {
-    return gsap.to(element, {
-      opacity: 1,
-      duration: config.duration || 0.5,
-      ease: config.ease || 'power2.out',
-      delay: config.delay || 0
-    })
+function interpolateState(startState: GsapState<any>, endState: GsapState<any>, progress: number) {
+  const interpolatedState: Record<string, any> = {};
+
+  // 处理 style 属性
+  if (startState.style && endState.style) {
+    interpolatedState.style = {};
+    Object.keys(startState.style).forEach((key) => {
+      interpolatedState.style[key] = gsap.utils.interpolate(
+        startState.style[key],
+        endState.style[key],
+        progress
+      );
+    });
   }
 
-  /**
-   * 淡出动画
-   * @param element DOM元素或选择器
-   * @param config 动画配置
-   */
-  static fadeOut(element: Element | string, config: AnimationConfig = {}) {
-    return gsap.to(element, {
-      opacity: 0,
-      duration: config.duration || 0.5,
-      ease: config.ease || 'power2.out',
-      delay: config.delay || 0
-    })
+  // 处理 props 属性
+  if (startState.props && endState.props) {
+    interpolatedState.props = {};
+    Object.keys(startState.props).forEach((key) => {
+      interpolatedState.props[key] = gsap.utils.interpolate(
+        startState.props[key],
+        endState.props[key],
+        progress
+      );
+    });
   }
 
-  /**
-   * 从下方滑入
-   * @param element DOM元素或选择器
-   * @param config 动画配置
-   */
-  static slideInUp(element: Element | string, config: AnimationConfig = {}) {
-    return gsap.from(element, {
-      y: 50,
-      opacity: 0,
-      duration: config.duration || 0.8,
-      ease: config.ease || 'power2.out',
-      delay: config.delay || 0
-    })
+  return interpolatedState;
+}
+
+function createScrollTrigger(
+  el: HTMLElement,
+  startPoint: string,
+  endPoint: string,
+  startState: GsapState<any>,
+  endState: GsapState<any>,
+  isComponent: boolean,
+  updateCallback?: (progress: number, state: Record<string, any>) => void
+) {
+  return gsap.timeline({
+    scrollTrigger: {
+      trigger: el,
+      start: startPoint,
+      end: endPoint,
+      scrub: 0.1,
+      markers: false,
+      onUpdate: (self) => {
+        const interpolatedState = interpolateState(startState, endState, self.progress);
+        if (isComponent && updateCallback) {
+          updateCallback(self.progress, interpolatedState);
+        } else {
+          if (interpolatedState.style) {
+            gsap.set(el, { ...interpolatedState.style });
+          }
+          if (interpolatedState.props) {
+            gsap.set(el, { ...interpolatedState.props });
+          }
+        }
+      },
+    },
+  });
+}
+
+export function createGsapTimeline(keyframe: GsapType, options: CreateTimelineOptions) {
+  const { el, isComponent, updateCallback } = options;
+  const timelines: gsap.core.Timeline[] = [];
+
+  if (keyframe.type === "range") {
+    const tl = createScrollTrigger(
+      el,
+      keyframe.startPoint.point,
+      keyframe.endPoint.point,
+      keyframe.startPoint.state,
+      keyframe.endPoint.state,
+      isComponent,
+      updateCallback
+    );
+    timelines.push(tl);
   }
 
-  /**
-   * 从上方滑入
-   * @param element DOM元素或选择器
-   * @param config 动画配置
-   */
-  static slideInDown(element: Element | string, config: AnimationConfig = {}) {
-    return gsap.from(element, {
-      y: -50,
-      opacity: 0,
-      duration: config.duration || 0.8,
-      ease: config.ease || 'power2.out',
-      delay: config.delay || 0
-    })
+  if (keyframe.type === "fream") {
+    for (let i = 0; i < keyframe.points.length - 1; i++) {
+      const currentPoint = keyframe.points[i];
+      const nextPoint = keyframe.points[i + 1];
+      const tl = createScrollTrigger(
+        el,
+        currentPoint.point,
+        nextPoint.point,
+        currentPoint.state,
+        nextPoint.state,
+        isComponent,
+        updateCallback
+      );
+      timelines.push(tl);
+    }
   }
 
-  /**
-   * 创建时间轴动画
-   * @returns GSAP时间轴实例
-   */
-  static createTimeline() {
-    return gsap.timeline()
-  }
-
-  /**
-   * 自定义动画
-   * @param element DOM元素或选择器
-   * @param props 动画属性
-   * @param config 动画配置
-   */
-  static animate(
-    element: Element | string,
-    props: gsap.TweenVars,
-    config: AnimationConfig = {}
-  ) {
-    return gsap.to(element, {
-      ...props,
-      duration: config.duration || 0.5,
-      ease: config.ease || 'power2.out',
-      delay: config.delay || 0
-    })
-  }
-} 
+  return timelines;
+}
