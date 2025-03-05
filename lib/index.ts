@@ -28,9 +28,11 @@ declare module '@vue/runtime-core' {
   }
 
   export interface ComponentCustomProperties {
-    vGsap: typeof import("./directives")["vGsap"];
-    vGsapProps: typeof import("./directives")["vGsapProps"];
-    vGsapStyle: typeof import("./directives")["vGsapStyle"];
-    vGsapAttrs: typeof import("./directives")["vGsapAttrs"];
+    vGsap: typeof import("./directives")["Gsap"];
+    vGsapProps: typeof import("./directives")["GsapProps"];
+    vGsapStyle: typeof import("./directives")["GsapStyle"];
+    vGsapAttrs: typeof import("./directives")["GsapAttrs"];
+    vHorizontalScroll: typeof import("./directives")["HorizontalScroll"];
+    vVerticalScroll: typeof import("./directives")["VerticalScroll"];
   }
 } 

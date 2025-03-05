@@ -12,5 +12,8 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['gsap/ScrollTrigger']
+  },
+  define: {
+    'process.env': process.env
   }
 })

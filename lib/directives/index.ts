@@ -1,8 +1,11 @@
-import { vGsap, vGsapProps, vGsapStyle, vGsapAttrs } from './gsap'
+import { Gsap, GsapProps, GsapStyle, GsapAttrs } from './gsap'
+import { HorizontalScroll, VerticalScroll } from './scroll'
 
 export {
-  vGsap,
-  vGsapProps,
-  vGsapStyle,
-  vGsapAttrs
-} 
+  Gsap,
+  GsapProps,
+  GsapStyle,
+  GsapAttrs,
+  HorizontalScroll,
+  VerticalScroll
+}

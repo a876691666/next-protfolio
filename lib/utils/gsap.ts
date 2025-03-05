@@ -1,5 +1,6 @@
 import gsap from "gsap";
 import type { GsapType } from "../helper";
+import { markers } from "../store/global";
 
 interface CreateTimelineOptions {
   el: HTMLElement;
@@ -58,7 +59,7 @@ function createStyleScrollTrigger(
       start: startPoint,
       end: endPoint,
       scrub: 0.1,
-      markers: false,
+      markers: markers.value,
       onUpdate: (self) => {
         const interpolatedState = interpolateStyleState(startState, endState, self.progress);
         if (isComponent && updateCallback) {
@@ -86,7 +87,7 @@ function createPropsScrollTrigger(
       start: startPoint,
       end: endPoint,
       scrub: 0.1,
-      markers: false,
+      markers: markers.value,
       onUpdate: (self) => {
         const interpolatedState = interpolatePropsState(startState, endState, self.progress);
         if (isComponent && updateCallback) {
@@ -114,7 +115,7 @@ function createAttrsScrollTrigger(
       start: startPoint,
       end: endPoint,
       scrub: 0.1,
-      markers: false,
+      markers: markers.value,
       onUpdate: (self) => {
         const interpolatedState = interpolateAttrsState(startState, endState, self.progress);
         if (isComponent && updateCallback) {

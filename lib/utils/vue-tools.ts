@@ -6,10 +6,10 @@ import { watch } from "vue";
  * @param ref The ref to watch
  * @returns Promise that resolves when the ref value is valid
  */
-export const waitForRef = <T>(ref: Ref<T | null | undefined>): Promise<T> => {
+export const waitForTrue = <T>(ref: Ref<T | null | undefined>): Promise<T> => {
   return new Promise((resolve) => {
     // If value is already valid, resolve immediately
-    if (ref.value != null) {
+    if (ref.value) {
       resolve(ref.value);
       return;
     }
@@ -18,7 +18,7 @@ export const waitForRef = <T>(ref: Ref<T | null | undefined>): Promise<T> => {
     const stopWatch = watch(
       ref,
       (newVal) => {
-        if (newVal != null) {
+        if (newVal) {
           stopWatch();
           resolve(newVal);
         }

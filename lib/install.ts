@@ -1,6 +1,7 @@
 import type { App } from "vue";
 import * as coreComponents from "./core";
-import { vGsap, vGsapStyle, vGsapAttrs, vGsapProps } from "./directives";
+import * as components from "./components";
+import * as directives from "./directives";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 
@@ -12,11 +13,13 @@ export function install(app: App) {
     app.component(name, component);
   });
 
-  // 注册所有指令
-  app.directive("gsap", vGsap);
-  app.directive("gsap-style", vGsapStyle);
-  app.directive("gsap-attrs", vGsapAttrs);
-  app.directive("gsap-props", vGsapProps);
+  Object.entries(components).forEach(([name, component]) => {
+    app.component(name, component);
+  });
+
+  Object.entries(directives).forEach(([name, directive]) => {
+    app.directive(name, directive);
+  });
 
   return app;
 }
