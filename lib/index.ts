@@ -1,7 +1,7 @@
 import { install } from './install'
 
 // 导出所有组件
-export * from './components'
+export * from './core'
 
 // 导出所有工具函数
 export * from './utils'
@@ -23,11 +23,14 @@ export default {
 // 声明模块扩展
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    PageBase: typeof import('./components')['PageBase']
+    ScrollBase: typeof import("./core")["ScrollBase"];
     // 在这里添加其他组件的类型声明
   }
 
   export interface ComponentCustomProperties {
-    vGsap: typeof import('./directives')['vGsap']
+    vGsap: typeof import("./directives")["vGsap"];
+    vGsapProps: typeof import("./directives")["vGsapProps"];
+    vGsapStyle: typeof import("./directives")["vGsapStyle"];
+    vGsapAttrs: typeof import("./directives")["vGsapAttrs"];
   }
 } 

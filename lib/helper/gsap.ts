@@ -1,8 +1,3 @@
-export type GsapState<T> = {
-  props?: T;
-  style?: any;
-};
-
 export type GsapRange<T> = {
   type: "range";
   startPoint: GsapPoint<T>;
@@ -12,7 +7,7 @@ export type GsapRange<T> = {
 export type GsapPoint<T> = {
   type: "point";
   point: string;
-  state: GsapState<T>;
+  state: T;
   trigger?: HTMLElement;
 };
 
@@ -31,7 +26,7 @@ export const rangeGsap = <T>(startPoint: GsapPoint<T>, endPoint: GsapPoint<T>): 
   };
 };
 
-export const pointGsap = <T>(point: string, state: GsapState<T>): GsapPoint<T> => {
+export const pointGsap = <T>(point: string, state: T): GsapPoint<T> => {
   return {
     type: "point",
     point,

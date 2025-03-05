@@ -1,54 +1,51 @@
 <template>
   <ScrollBase>
-    <!-- PageBase 组件 -->
-    <PageBase
-      v-gsap="[
-        rangeGsap(
-          pointGsap('top top', { props: { scale: 1 } }),
-          pointGsap('bottom top', { props: { scale: 0 } })
-        ),
-      ]"
-    >
-      <div class="section">
+    <div>
+      <div
+        class="section"
+        v-gsap-style="[
+          rangeGsap(pointGsap('top top', { scale: 1 }), pointGsap('bottom top', { scale: 0 })),
+        ]"
+      >
         <span
-          v-gsap="[
+          v-gsap-style="[
             rangeGsap(
-              pointGsap('center 100%', { style: { opacity: 0 } }),
-              pointGsap('center 50%', { style: { opacity: 1 } })
+              pointGsap('center 100%', { opacity: 0 }),
+              pointGsap('center 50%', { opacity: 1 })
             ),
             rangeGsap(
-              pointGsap('center 50%', { style: { opacity: 1 } }),
-              pointGsap('center 0%', { style: { opacity: 0 } })
+              pointGsap('center 50%', { opacity: 1 }),
+              pointGsap('center 0%', { opacity: 0 })
             ),
           ]"
         >
           第一屏
         </span>
       </div>
-    </PageBase>
+    </div>
 
-    <PageBase>
+    <div>
       <div class="section">
         <span
           v-gsap="[
             freamGsap([
-              pointGsap('center 100%', { style: { fontSize: 12, opacity: 0 } }),
-              pointGsap('center 50%', { style: { fontSize: 50, opacity: 1 } }),
-              pointGsap('center 0%', { style: { fontSize: 12, opacity: 0 } }),
+              pointGsap('center 100%', { fontSize: 12, opacity: 0 }),
+              pointGsap('center 50%', { fontSize: 50, opacity: 1 }),
+              pointGsap('center 0%', { fontSize: 12, opacity: 0 }),
             ]),
           ]"
         >
           第2屏
         </span>
       </div>
-    </PageBase>
+    </div>
 
     <!-- 其他内容 -->
   </ScrollBase>
 </template>
 
 <script setup lang="ts">
-import { ScrollBase, PageBase, rangeGsap, pointGsap, freamGsap } from "next-portfolio";
+import { ScrollBase, rangeGsap, pointGsap, freamGsap } from "next-portfolio";
 </script>
 
 <style scoped>

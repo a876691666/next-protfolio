@@ -5,41 +5,51 @@ import { init } from "../store/global";
 
 export type GsapBindingValue = GsapType[];
 
-export const vGsap: Directive = {
-  async mounted(el: HTMLElement, binding: DirectiveBinding<GsapBindingValue>, vnode: any) {
-    await waitForRef(init);
+// 基础 GSAP 指令创建函数
+function createGsapDirective(type: 'props' | 'style' | 'attrs'): Directive {
+  return {
+    async mounted(el: HTMLElement & { _gsapTimelines: gsap.core.Timeline[] }, binding: DirectiveBinding<GsapBindingValue>, vnode: any) {
+      await waitForRef(init);
 
-    let isComponent = false;
-    if (vnode.ctx.exposed?.gsapUpdate) {
-      isComponent = true;
-    }
+      let isComponent = false;
+      if (vnode.ctx.exposed?.gsapUpdate) {
+        isComponent = true;
+      }
 
-    const keyframes = binding.value;
+      const keyframes = binding.value;
 
-    // Store all timelines for cleanup
-    (el as any)._gsapTimelines = [];
+      if (!el._gsapTimelines) {
+        el._gsapTimelines = [];
+      }
 
-    // Create timelines for each keyframe
-    keyframes.forEach((keyframe) => {
-      const timelines = createGsapTimeline(keyframe, {
-        el,
-        isComponent,
-        updateCallback: isComponent
-          ? (progress, state) => vnode.ctx.exposed?.gsapUpdate(progress, state)
-          : undefined,
+      keyframes.forEach((keyframe) => {
+        const modifiedKeyframe = { ...keyframe, animationType: type };
+
+        const timelines = createGsapTimeline(modifiedKeyframe, {
+          el,
+          isComponent,
+          updateCallback: isComponent
+            ? (progress, state) => vnode.ctx.exposed?.gsapUpdate(progress, state)
+            : undefined,
+        });
+        (el as any)._gsapTimelines.push(...timelines);
       });
-      (el as any)._gsapTimelines.push(...timelines);
-    });
-  },
+    },
 
-  unmounted(el: HTMLElement) {
-    // Clean up all ScrollTriggers and timelines
-    if ((el as any)._gsapTimelines) {
-      (el as any)._gsapTimelines.forEach((tl: gsap.core.Timeline) => {
-        tl.scrollTrigger?.kill();
-        tl.kill();
-      });
-      (el as any)._gsapTimelines = [];
-    }
-  },
-};
+    unmounted(el: HTMLElement & { _gsapTimelines: gsap.core.Timeline[] }) {
+      if (el._gsapTimelines) {
+        el._gsapTimelines.forEach((tl: gsap.core.Timeline) => {
+          tl.scrollTrigger?.kill();
+          tl.kill();
+        });
+        el._gsapTimelines = [];
+      }
+    },
+  };
+}
+
+// 创建三个不同的指令
+export const vGsapProps: Directive = createGsapDirective('props');
+export const vGsapStyle: Directive = createGsapDirective('style');
+export const vGsapAttrs: Directive = createGsapDirective('attrs');
+export const vGsap: Directive = createGsapDirective('style');
