@@ -51,6 +51,19 @@
       </div>
     </div>
 
+    <!-- 横向滚动部分 -->
+    <div>
+      <Horizontal>
+        <div class="horizontal-item">123</div>
+        <div class="horizontal-item">
+          <h2>横向滚动 2</h2>
+        </div>
+        <div class="horizontal-item">
+          <h2>横向滚动 3</h2>
+        </div>
+      </Horizontal>
+    </div>
+
     <!-- 其他内容 -->
   </ScrollBase>
 </template>
