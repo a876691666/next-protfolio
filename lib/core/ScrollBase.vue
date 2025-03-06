@@ -7,15 +7,16 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, shallowRef } from "vue";
+import { onMounted, shallowRef } from "vue";
+import ScrollTrigger from "gsap/ScrollTrigger";
 import { init } from "../store/global";
 
 const scrollBaseRef = shallowRef<HTMLElement>();
 onMounted(() => {
+  ScrollTrigger.defaults({ scroller: scrollBaseRef.value });
+
   init.value = true;
 });
-
-onUnmounted(() => {});
 </script>
 
 <style scoped>
