@@ -8,7 +8,6 @@
 
 <script lang="ts" setup>
 import { onMounted, onUnmounted, shallowRef } from "vue";
-import "locomotive-scroll/dist/locomotive-scroll.css";
 import { init } from "../store/global";
 
 const scrollBaseRef = shallowRef<HTMLElement>();
