@@ -1,2 +1,3 @@
-export { default as Horizontal } from './Horizontal.vue';
-export { default as Vertical } from './Vertical.vue';
+export { default as SimpleHorizontalScroll } from './SimpleHorizontalScroll.vue';
+export { default as SimpleVerticalScroll } from './SimpleVerticalScroll.vue';
+export { default as GsapEl } from './GsapEl.vue';

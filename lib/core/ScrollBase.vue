@@ -7,15 +7,38 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, shallowRef } from "vue";
+import { onMounted, onUnmounted, shallowRef } from "vue";
 import ScrollTrigger from "gsap/ScrollTrigger";
-import { init } from "../store/global";
+import { init, progress } from "../store/global";
+// import gsap from "gsap";
+
+const updateProgress = () => {
+  if (!scrollBaseRef.value) return;
+  progress.value =
+    scrollBaseRef.value?.scrollTop /
+    (scrollBaseRef.value?.scrollHeight - scrollBaseRef.value?.clientHeight);
+};
 
 const scrollBaseRef = shallowRef<HTMLElement>();
 onMounted(() => {
   ScrollTrigger.defaults({ scroller: scrollBaseRef.value });
 
+  // 监听scrollBaseRef的scroll事件
+  scrollBaseRef.value?.addEventListener("scroll", updateProgress);
+
+  const resizeObserver = new ResizeObserver(() => {
+    ScrollTrigger.refresh();
+  });
+
+  if (scrollBaseRef.value) {
+    resizeObserver.observe(scrollBaseRef.value);
+  }
+
   init.value = true;
+});
+
+onUnmounted(() => {
+  scrollBaseRef.value?.removeEventListener("scroll", updateProgress);
 });
 </script>
 

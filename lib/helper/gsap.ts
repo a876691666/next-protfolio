@@ -1,42 +1,54 @@
+import type { ComponentPublicInstance } from "vue";
+
+type GsapOptions = {
+  trigger?: HTMLElement;
+  target?: HTMLElement | ComponentPublicInstance;
+} & ScrollTrigger.Vars;
+
 export type GsapRange<T> = {
   type: "range";
   startPoint: GsapPoint<T>;
   endPoint: GsapPoint<T>;
+  options?: GsapOptions;
 };
 
 export type GsapPoint<T> = {
   type: "point";
   point: string;
   state: T;
-  trigger?: HTMLElement;
+  options?: GsapOptions;
 };
 
-export type GsapFream<T> = {
-  type: "fream";
+export type GsapFrame<T> = {
+  type: "frame";
   points: GsapPoint<T>[];
+  options?: GsapOptions;
 };
 
-export type GsapType = GsapRange<any> | GsapPoint<any> | GsapFream<any>;
+export type GsapType = GsapRange<any> | GsapPoint<any> | GsapFrame<any>;
 
-export const rangeGsap = <T>(startPoint: GsapPoint<T>, endPoint: GsapPoint<T>): GsapRange<T> => {
+export const rangeGsap = <T>(startPoint: GsapPoint<T>, endPoint: GsapPoint<T>, options?: GsapOptions): GsapRange<T> => {
   return {
     type: "range",
     startPoint,
     endPoint,
+    options,
   };
 };
 
-export const pointGsap = <T>(point: string, state: T): GsapPoint<T> => {
+export const pointGsap = <T>(point: string, state: T, options?: GsapOptions): GsapPoint<T> => {
   return {
     type: "point",
     point,
     state,
+    options,
   };
 };
 
-export const freamGsap = <T>(points: GsapPoint<T>[]): GsapFream<T> => {
+export const frameGsap = <T>(points: GsapPoint<T>[], options?: GsapOptions): GsapFrame<T> => {
   return {
-    type: "fream",
+    type: "frame",
     points,
+    options,
   };
 };

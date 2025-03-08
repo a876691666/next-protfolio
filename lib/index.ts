@@ -1,13 +1,11 @@
 import { install } from './install'
+import { SimpleHorizontalScroll, SimpleVerticalScroll, GsapEl } from './components'
 
 // 导出所有组件
 export * from './core'
 
 // 导出所有工具函数
 export * from './utils'
-
-// 导出所有指令
-export * from './directives'
 
 // 导出所有辅助函数
 export * from './helper'
@@ -20,19 +18,13 @@ export default {
   version
 }
 
+
 // 声明模块扩展
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     ScrollBase: typeof import("./core")["ScrollBase"];
-    // 在这里添加其他组件的类型声明
-  }
-
-  export interface ComponentCustomProperties {
-    vGsap: typeof import("./directives")["Gsap"];
-    vGsapProps: typeof import("./directives")["GsapProps"];
-    vGsapStyle: typeof import("./directives")["GsapStyle"];
-    vGsapAttrs: typeof import("./directives")["GsapAttrs"];
-    vHorizontalScroll: typeof import("./directives")["HorizontalScroll"];
-    vVerticalScroll: typeof import("./directives")["VerticalScroll"];
+    SimpleHorizontalScroll: typeof SimpleHorizontalScroll;
+    SimpleVerticalScroll: typeof SimpleVerticalScroll;
+    GsapEl: typeof GsapEl;
   }
 } 
