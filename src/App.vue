@@ -35,6 +35,19 @@
       </Horizontal>
     </div>
 
+    <!-- 垂直滚动部分 -->
+    <div>
+      <Vertical>
+        <div class="vertical-item">123</div>
+        <div class="vertical-item">
+          <h2>横向滚动 2</h2>
+        </div>
+        <div class="vertical-item">
+          <h2>横向滚动 3</h2>
+        </div>
+      </Vertical>
+    </div>
+
     <div>
       <div class="section">
         <span
@@ -74,6 +87,14 @@ import { ScrollBase, rangeGsap, pointGsap, freamGsap } from "next-portfolio";
 
 <style scoped>
 .section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+.vertical-item {
   height: 100vh;
   display: flex;
   align-items: center;

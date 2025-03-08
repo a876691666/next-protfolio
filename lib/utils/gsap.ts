@@ -4,53 +4,23 @@ import { markers } from "../store/global";
 
 interface CreateTimelineOptions {
   el: HTMLElement;
-  isComponent: boolean;
   updateCallback?: (progress: number, state: Record<string, any>) => void;
 }
 
-function interpolateStyleState(startState: any, endState: any, progress: number) {
+function interpolateState(startState: any, endState: any, progress: number) {
   const interpolatedState: Record<string, any> = {};
   Object.keys(startState).forEach((key) => {
-    interpolatedState[key] = gsap.utils.interpolate(
-      startState[key],
-      endState[key],
-      progress
-    );
+    interpolatedState[key] = gsap.utils.interpolate(startState[key], endState[key], progress);
   });
   return interpolatedState;
 }
 
-function interpolatePropsState(startState: any, endState: any, progress: number) {
-  const interpolatedState: Record<string, any> = {};
-  Object.keys(startState).forEach((key) => {
-    interpolatedState[key] = gsap.utils.interpolate(
-      startState[key],
-      endState[key],
-      progress
-    );
-  });
-  return interpolatedState;
-}
-
-function interpolateAttrsState(startState: any, endState: any, progress: number) {
-  const interpolatedState: Record<string, any> = {};
-  Object.keys(startState).forEach((key) => {
-    interpolatedState[key] = gsap.utils.interpolate(
-      startState[key],
-      endState[key],
-      progress
-    );
-  });
-  return interpolatedState;
-}
-
-function createStyleScrollTrigger(
+function createScrollTrigger(
   el: HTMLElement,
   startPoint: string,
   endPoint: string,
   startState: any,
   endState: any,
-  isComponent: boolean,
   updateCallback?: (progress: number, state: Record<string, any>) => void
 ) {
   return gsap.timeline({
@@ -61,99 +31,46 @@ function createStyleScrollTrigger(
       scrub: 0.1,
       markers: markers.value,
       onUpdate: (self) => {
-        const interpolatedState = interpolateStyleState(startState, endState, self.progress);
-        if (isComponent && updateCallback) {
+        const interpolatedState = interpolateState(startState, endState, self.progress);
+        if (updateCallback) {
           updateCallback(self.progress, interpolatedState);
-        } else {
-          gsap.set(el, { ...interpolatedState });
         }
+        gsap.set(el, { ...interpolatedState });
       },
     },
   });
 }
-
-function createPropsScrollTrigger(
-  el: HTMLElement,
-  startPoint: string,
-  endPoint: string,
-  startState: any,
-  endState: any,
-  isComponent: boolean,
-  updateCallback?: (progress: number, state: Record<string, any>) => void
-) {
-  return gsap.timeline({
-    scrollTrigger: {
-      trigger: el,
-      start: startPoint,
-      end: endPoint,
-      scrub: 0.1,
-      markers: markers.value,
-      onUpdate: (self) => {
-        const interpolatedState = interpolatePropsState(startState, endState, self.progress);
-        if (isComponent && updateCallback) {
-          updateCallback(self.progress, interpolatedState);
-        } else {
-          gsap.set(el, { ...interpolatedState });
-        }
-      },
-    },
-  });
-}
-
-function createAttrsScrollTrigger(
-  el: HTMLElement,
-  startPoint: string,
-  endPoint: string,
-  startState: any,
-  endState: any,
-  isComponent: boolean,
-  updateCallback?: (progress: number, state: Record<string, any>) => void
-) {
-  return gsap.timeline({
-    scrollTrigger: {
-      trigger: el,
-      start: startPoint,
-      end: endPoint,
-      scrub: 0.1,
-      markers: markers.value,
-      onUpdate: (self) => {
-        const interpolatedState = interpolateAttrsState(startState, endState, self.progress);
-        if (isComponent && updateCallback) {
-          updateCallback(self.progress, interpolatedState);
-        } else {
-          Object.entries(interpolatedState).forEach(([key, value]) => {
-            el.setAttribute(key, String(value));
-          });
-        }
-      },
-    },
-  });
-}
-
-const createTriggerMap = {
-  props: createPropsScrollTrigger,
-  attrs: createAttrsScrollTrigger,
-  style: createStyleScrollTrigger,
-};
 
 export function createGsapTimeline(
-  keyframe: GsapType & { animationType?: 'props' | 'style' | 'attrs' },
+  keyframe: GsapType & { animationType?: "props" | "style" | "attrs" },
   options: CreateTimelineOptions
 ) {
-  const { el, isComponent, updateCallback } = options;
+  const { el, updateCallback } = options;
   const timelines: gsap.core.Timeline[] = [];
 
-  const createTrigger = createTriggerMap[keyframe.animationType || 'style'];
+  const onUpdate = (progress: number, state: Record<string, any>) => {
+    if (keyframe.animationType === "attrs") {
+      Object.entries(state).forEach(([key, value]) => {
+        el.setAttribute(key, String(value));
+      });
+    } else if (keyframe.animationType === "props") {
+      Object.entries(state).forEach(([key, value]) => {
+        (el as any)[key] = value;
+      });
+    } else {
+      gsap.set(el, { ...state });
+    }
+    updateCallback?.(progress, state);
+  };
 
   if (keyframe.type === "range") {
-    const tl = createTrigger(
+    const tl = createScrollTrigger(
       el,
       keyframe.startPoint.point,
       keyframe.endPoint.point,
       keyframe.startPoint.state,
       keyframe.endPoint.state,
-      isComponent,
-      updateCallback
+      onUpdate
     );
     timelines.push(tl);
   }
@@ -162,14 +79,13 @@ export function createGsapTimeline(
     for (let i = 0; i < keyframe.points.length - 1; i++) {
       const currentPoint = keyframe.points[i];
       const nextPoint = keyframe.points[i + 1];
-      const tl = createTrigger(
+      const tl = createScrollTrigger(
         el,
         currentPoint.point,
         nextPoint.point,
         currentPoint.state,
         nextPoint.state,
-        isComponent,
-        updateCallback
+        onUpdate
       );
       timelines.push(tl);
     }

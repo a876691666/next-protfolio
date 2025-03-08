@@ -31,7 +31,6 @@ function createGsapDirective(type: 'props' | 'style' | 'attrs'): Directive {
 
           const timelines = createGsapTimeline(modifiedKeyframe, {
             el,
-            isComponent,
             updateCallback: isComponent
               ? (progress, state) => vnode.ctx.exposed?.gsapUpdate(progress, state)
               : undefined,
